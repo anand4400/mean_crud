@@ -9,7 +9,6 @@ module.exports = (app) => {
     app.put("/arkenea/api/updateUser/:UserID", UserFunction.UpdateUser);
     app.delete("/arkenea/api/deleteUser/:userID", UserFunction.DeleteUser);
     app.get("/document/:image", UserFunction.getImage);
-    app.post("/uploadimage/", UserFunction.uploadImage);
 
     
     //======================== Not found urls =======================//

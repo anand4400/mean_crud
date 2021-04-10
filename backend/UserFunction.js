@@ -4,12 +4,20 @@ const path = require('path');
 const multer = require('multer');
 const fs = require("fs");
 const url = require("url");
-fs.mkdir(path.join(__dirname, 'document'), (err) => {
-    if (err) {
-        return console.error(err);
-    }
 
-});
+fs.access("./document", function(error) {
+    if (error) {
+        fs.mkdir(path.join(__dirname, 'document'), (err) => {
+            if (err) {
+                return console.error(err);
+            }
+        
+        });
+    } else {
+
+    }
+  })
+
 var storage = multer.diskStorage({
     destination: function(req, file, callback){
         callback(null, path.join(__dirname, './document'));
@@ -236,26 +244,4 @@ module.exports = {
     
     },
 
-    uploadImage(req , res) {
-        const upload = multer({storage: storage,limits : {fileSize : 1000000}}).single("image");
-
-        upload(req, res , (err) => {          
-            if(err) return res.status(200).json({code:400, status:false , data: "image validation failed"});
-            var db = require( './db_config').db();
-            var path = req.protocol + '://' + req.get('host')+"/document/"+req.file['filename'];
-            var dataObj= {
-                image_name:req.file['filename'],
-                image_path:req.file['path']
-            };
-            db.collection("image").insertOne(dataObj, function(err, result) {
-                if (err && err['code'] == 11000){
-                    res.status(200).json({code:409, status:false , data:"Email already exists!"});
-                } else if(!err && result['insertedCount'] == 1){
-                    res.status(200).json({code:200, status:true , data:"User added successfully"});
-                } else{
-                    res.status(500).json({code:500, status:false , data:"Internal Server Error! Try again later",err:err, result:result});
-                }
-            });
-        });
-    },
 };
