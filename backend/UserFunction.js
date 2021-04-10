@@ -4,6 +4,12 @@ const path = require('path');
 const multer = require('multer');
 const fs = require("fs");
 const url = require("url");
+fs.mkdir(path.join(__dirname, 'document'), (err) => {
+    if (err) {
+        return console.error(err);
+    }
+
+});
 var storage = multer.diskStorage({
     destination: function(req, file, callback){
         callback(null, path.join(__dirname, './document'));
@@ -57,7 +63,8 @@ module.exports = {
     addUser(req , res) {
         const upload = multer({storage: storage,limits : {fileSize : 1000000}}).single("image");
 
-        upload(req, res , (err) => {          
+        upload(req, res , (err) => {    
+   
             if(err) return res.status(200).json({code:400, status:false , data: "image validation failed"});
             var db = require( './db_config').db();
             if(Number(req.body.phone) == NaN || req.body.phone.length != 10){
